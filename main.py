@@ -3,6 +3,7 @@ from browser import window
 from browser import bind
 import fenetre
 import terrain
+import evenement
 
 # Création de la fenetre
 fenetreDeJeu = fenetre.Fenetre()
@@ -18,6 +19,8 @@ def nouvelle_partie():
     """
     # recréation du terrain
     terrain_de_jeu.construction_terrain()
+    # recréation des événement
+    evenement.creer_evenement(terrain_de_jeu, fenetreDeJeu)
 
 nouvelle_partie()
 
@@ -25,6 +28,7 @@ def boucle_de_jeu():
     """
     Boucle principale du jeu
     """
+    
     terrain_de_jeu.dessin()
 
 # Mise à jour automatique quand on change la taille

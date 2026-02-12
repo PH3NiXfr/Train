@@ -84,7 +84,34 @@ class Tuile:
         :param autre_tuile: Description
         """
         return (abs(self.x-autre_tuile.x)+abs(self.y-autre_tuile.y)+abs(self.z-autre_tuile.z))/2
-
+    
+    # Teste une tuile pour une propagation           
+    def test_tuile(self,solution_tuile_mere,table_tuile_a_traiter, table_tuile_traitee):
+        if self.solution == 0 and self.x != 1000:
+            self.solution = solution_tuile_mere+1
+            table_tuile_a_traiter.insert(0,self)
+            table_tuile_traitee.append(self)
+            return True, table_tuile_a_traiter
+        else:
+            return False,table_tuile_a_traiter
+    
+    def collision(self, mx, my):
+        """
+        Détection collision point dans polygone
+        
+        :param mx: x
+        :param my: y
+        """
+        inside = False
+        n = len(self.verticle)
+        for i in range(n):
+            x1, y1 = self.verticle[i]
+            x2, y2 = self.verticle[(i+1) % n]
+            if ((y1 > my) != (y2 > my)) and \
+            (mx < (x2 - x1) * (my - y1) / (y2 - y1 + 1e-9) + x1):
+                inside = not inside
+        return inside
+    
     # Dessin d'une tuile
     def dessin(self):
         """
@@ -99,10 +126,15 @@ class Tuile:
             fenetre.ctx.lineTo(x, y)
         fenetre.ctx.closePath()
 
+        # if self.couleur_temp == (0,0,0):
+        #     print(self.x,self.y)
+        # if self.x == 0 and self.y == 0:
+        #     print(self.couleur_temp)
+
         fenetre.ctx.fillStyle = (
-            f"#{format(self.couleur[0], '02X')}"
-            f"{format(self.couleur[1], '02X')}"
-            f"{format(self.couleur[2], '02X')}"
+            f"#{format(self.couleur_temp[0], '02X')}"
+            f"{format(self.couleur_temp[1], '02X')}"
+            f"{format(self.couleur_temp[2], '02X')}"
         )
         fenetre.ctx.fill()
 

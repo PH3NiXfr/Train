@@ -1,5 +1,6 @@
 import random
 import tuile as Tuile
+import chemin as Chemin
 
 class Terrain:
     """
@@ -9,11 +10,17 @@ class Terrain:
         self.fenetre = fenetre_de_jeu
         self.taille_tuile = 20
         self.nb_tuile = round(max(fenetre_de_jeu.screen_w, fenetre_de_jeu.screen_h)/(self.taille_tuile*2))+1
-        print(fenetre_de_jeu.screen_w)
-        print(fenetre_de_jeu.screen_h)
-        print(self.nb_tuile)
         self.table_tuile = []
-        self.construction_terrain()
+        self.table_chemin = []
+        self.couleur_chemins = [(255,0,0), (0,255,0), (0,0,255)]
+        self.nb_chemin_a = 0
+        self.nb_chemin_b = 0
+        self.nb_chemin_c = 0
+        self.nb_ligne_a = 0
+        self.nb_ligne_b = 0
+        self.nb_ligne_c = 0
+        self.mem_tuile = None
+        self.n_couleur_chemin = 0
 
     # Génère un terrain de tuiles avec des reliefs aléatoires
     def construction_terrain(self):
@@ -98,7 +105,61 @@ class Terrain:
             ville.type_terrain = "ville"
             ville.solution = 0
             ville.couleur = (random.randint(175, 200), random.randint(175, 200), 0)
-            ville.couleurTemp = ville.couleur
+            ville.couleur_temp = ville.couleur
+
+    def get_tuile(self, x, y):
+        for tuile in self.table_tuile:
+            if tuile.x == x and tuile.y == y:
+                return tuile
+        return Tuile.Tuile(self, 1000,1000,1000,1000,100)
+    
+    def detection_tuile_clique(self, mx, my):
+        for tuile in self.table_tuile:
+            if tuile.collision(mx, my):
+                if self.mem_tuile is None:
+                    self.mem_tuile = tuile
+                    self.mem_tuile.couleur_temp = (self.mem_tuile.couleur_temp[0] + 20, self.mem_tuile.couleur_temp[1] + 20, self.mem_tuile.couleur_temp[2] + 20)
+                else:
+                    self.mem_tuile.couleur_temp = self.mem_tuile.couleur
+                    if tuile == self.mem_tuile:
+                        # Suppression des chemins
+                        for i in range(len(tuile.chemins)):
+                            # if tuile.chemins[0].couleur == self.couleur_chemins[0] and self.nb_chemin_a > 1:
+                            #     Ecran.argent += round(len(tuile.chemins[0].tuiles) * round(self.nb_ligne_a*0.3))
+                            # if tuile.chemins[0].couleur == self.couleur_chemins[1] and self.nb_chemin_b > 1:
+                            #     Ecran.argent += round(len(tuile.chemins[0].tuiles) * round(self.nb_ligne_b*0.3))
+                            # if tuile.chemins[0].couleur == self.couleur_chemins[2] and self.nb_chemin_b > 1:
+                            #     Ecran.argent += round(len(tuile.chemins[0].tuiles) * round(self.nb_ligne_b*0.3))
+                            self.table_chemin.remove(tuile.chemins[0])
+                            if tuile.chemins[0].couleur == self.couleur_chemins[0]:
+                                self.nb_ligne_a -= len(tuile.chemins[0].tuiles)
+                                self.nb_chemin_a -= 1
+                            if tuile.chemins[0].couleur == self.couleur_chemins[1]:
+                                self.nb_ligne_b -= len(tuile.chemins[0].tuiles)
+                                self.nb_chemin_b -= 1
+                            if tuile.chemins[0].couleur == self.couleur_chemins[2]:
+                                self.nb_ligne_c -= len(tuile.chemins[0].tuiles)
+                                self.nb_chemin_c -= 1
+                            tuile.chemins[0].suppr_chemin()
+                    else:
+                        # Création d’un nouveau chemin
+                        nouveau_chemin, chemin_valide = Chemin.resolution(self, tuile, self.mem_tuile, 1)
+                        if nouveau_chemin != [] and chemin_valide:
+                            self.table_chemin.append(nouveau_chemin)
+                            if nouveau_chemin.couleur == self.couleur_chemins[0]:
+                                # Ecran.argent -= len(nouveau_chemin.tuiles) * round(self.nb_ligne_a*0.5)
+                                self.nb_ligne_a += len(nouveau_chemin.tuiles)
+                                self.nb_chemin_a += 1
+                            if nouveau_chemin.couleur == self.couleur_chemins[1]:
+                                # Ecran.argent -= len(nouveau_chemin.tuiles) * round(self.nb_ligne_b*0.5)
+                                self.nb_ligne_b += len(nouveau_chemin.tuiles)
+                                self.nb_chemin_b += 1
+                            if nouveau_chemin.couleur == self.couleur_chemins[2]:
+                                # Ecran.argent -= len(nouveau_chemin.tuiles) * round(self.nb_ligne_c*0.5)
+                                self.nb_ligne_c += len(nouveau_chemin.tuiles)
+                                self.nb_chemin_c += 1
+                        self.mem_tuile = None
+                break
     
     # Dessin du jeu
     def dessin(self):
@@ -108,3 +169,5 @@ class Terrain:
         self.fenetre.ctx.clearRect(0, 0, self.fenetre.canvas.width, self.fenetre.canvas.height)
         for tuile in self.table_tuile:
             tuile.dessin()
+        for chemin in self.table_chemin:
+            chemin.dessin(self, self.table_chemin)
