@@ -4,7 +4,7 @@ Module définissant la fenêtre principale du jeu.
 
 from browser import document
 from browser import window
-from src import score as Score
+from src.score import Score
 
 
 class Fenetre:
@@ -25,7 +25,7 @@ class Fenetre:
         self.interface_ctx = None
         self.screen_w = window.innerWidth
         self.screen_h = window.innerHeight
-        self.score = Score.Score(self)
+        self.score = Score(self)
         self.outil = "ligne"
         self.menu = None
         self.terrain = None

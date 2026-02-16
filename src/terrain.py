@@ -1,7 +1,7 @@
 import random
-from src import tuile as Tuile
-from src import chemin as Chemin
-from src import train as Train
+from src.tuile import Tuile
+from src.chemin import resolution
+from src.train import Train
 
 class Terrain:
     """
@@ -38,7 +38,7 @@ class Terrain:
                 px = x * (self.taille_tuile * 2)
                 py = (y * (self.taille_tuile * 2)) + x * self.taille_tuile
 
-                new_tuile = Tuile.Tuile(self, x, y, px, py, 1)
+                new_tuile = Tuile(self, x, y, px, py, 1)
                 self.table_tuile.append(new_tuile)
 
         # Remplissage du relief jusqu'à obtenir un ratio de plaines acceptable
@@ -116,7 +116,7 @@ class Terrain:
         for tuile in self.table_tuile:
             if tuile.x == x and tuile.y == y:
                 return tuile
-        return Tuile.Tuile(self, 1000,1000,1000,1000,100)
+        return Tuile(self, 1000,1000,1000,1000,100)
     
     def detection_tuile_clique(self, mx, my):
         for tuile in self.table_tuile:
@@ -149,7 +149,7 @@ class Terrain:
                                 tuile.chemins[0].suppr_chemin()
                         else:
                             # Création d’un nouveau chemin
-                            nouveau_chemin, chemin_valide = Chemin.resolution(self, tuile, self.mem_tuile, 1)
+                            nouveau_chemin, chemin_valide = resolution(self, tuile, self.mem_tuile, 1)
                             if nouveau_chemin != [] and chemin_valide:
                                 self.table_chemin.append(nouveau_chemin)
                                 if nouveau_chemin.couleur == self.couleur_chemins[0]:
@@ -184,7 +184,7 @@ class Terrain:
                             if len(chemins_possible) != 0:
                                 chemin_train = random.choice(chemins_possible)
                                 # Ecran.argent -= len(Train.trains)*8
-                                self.trains.append(Train.Train(self, tuile, chemin_train))
+                                self.trains.append(Train(self, tuile, chemin_train))
                             # else:
                             #     # Notification si trop de trains sur la ligne
                             #     Notif.notifTropDeTrain.montrer = True

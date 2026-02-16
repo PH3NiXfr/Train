@@ -5,23 +5,24 @@ Ce module initialise la fenêtre, le menu et le terrain,
 puis lance la boucle principale ainsi que l'animation des trains.
 """
 
-from src import fenetre
-from src import menu
-from src import terrain
-from src import evenement
+from src.fenetre import Fenetre
+from src.menu import Menu
+from src.terrain import Terrain
+from src.evenement import creer_evenement
 from browser import timer
 from browser import window
 from browser import bind
-
+f = Fenetre()
+print(f)
 
 # Création de la fenêtre principale du jeu
-fenetreDeJeu = fenetre.Fenetre()
+fenetreDeJeu = Fenetre()
 
 # Création du menu principal
-menuDeJeu = menu.Menu(fenetreDeJeu)
+menuDeJeu = Menu(fenetreDeJeu)
 
 # Création du terrain de jeu
-terrain_de_jeu = terrain.Terrain(fenetreDeJeu)
+terrain_de_jeu = Terrain(fenetreDeJeu)
 
 # Initialisation de la fenêtre avec le menu
 fenetreDeJeu.setup(menuDeJeu, terrain_de_jeu)
@@ -37,7 +38,7 @@ def nouvelle_partie():
     terrain_de_jeu.construction_terrain()
 
     # Recréation des événements
-    evenement.creer_evenement(terrain_de_jeu, fenetreDeJeu, menuDeJeu)
+    creer_evenement(terrain_de_jeu, fenetreDeJeu, menuDeJeu)
 
 
 def mouvement_des_trains(timestamp):
