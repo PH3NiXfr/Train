@@ -36,42 +36,37 @@ class Chemin:
                 tuile.solution = 1000
             tuile.chemins.remove(self)
         # Supprime aussi les trains liés à ce chemin
-        # for train in Train.trains.copy():
-        #     if train.chemin == self:
-        #         Ecran.argent += round(len(Train.trains)/2)
-        #         # Suppretion du train dans la liste des trains
-        #         if train.chemin.couleur == couleur_chemins[0]:
-        #             Train.nbTrainA -= 1
-        #         if train.chemin.couleur == couleur_chemins[1]:
-        #             Train.nbTrainB -= 1
-        #         if train.chemin.couleur == couleur_chemins[2]:
-        #             Train.nbTrainC -= 1
-        #         Train.trains.remove(train)
-        #         del train
+        for train in self.terrain.trains.copy():
+            if train.chemin == self:
+                # Ecran.argent += round(len(Train.trains)/2)
+                # Suppretion du train dans la liste des trains
+                self.terrain.trains.remove(train)
+                del train
         del self
 
-    # def get_next_tuile(self, train):
-    #     """
-    #     Renvoie la tuile suivante dans la direction du train
+    def get_next_tuile(self, train):
+        """
+        Renvoie la tuile suivante dans la direction du train
         
-    #     :param train: train à traiter
-    #     """
-    #     for i in range(len(self.tuiles)):
-    #         if train.direction == 1:
-    #             if train.tuile == self.tuiles[i]:
-    #                 if i+1 < len(self.tuiles):
-    #                     return self.tuiles[i+1]
-    #                 else:
-    #                     train.direction *= -1
-    #                     return self.tuiles[i-1]
-    #         else:
-    #             if train.tuile == self.tuiles[i]:
-    #                 if i-1 >= 0:
-    #                     return self.tuiles[i-1]
-    #                 else:
-    #                     train.direction *= -1
-    #                     return self.tuiles[i+1]
-    #     return None
+        :param train: train à traiter
+        """
+        for i, tuile in enumerate(self.tuiles):
+            if train.direction == 1:
+                if train.tuile == tuile:
+                    if i+1 < len(self.tuiles):
+                        return self.tuiles[i+1]
+                    else:
+                        train.direction *= -1
+                        return self.tuiles[i-1]
+            else:
+                if train.tuile == tuile:
+                    if i-1 >= 0:
+                        return self.tuiles[i-1]
+                    else:
+                        train.direction *= -1
+                        return self.tuiles[i+1]
+        return None
+    
     def dessin(self, terrain, table_chemin):
         """
         Dessin d'un chemin

@@ -126,11 +126,6 @@ class Tuile:
             fenetre.ctx.lineTo(x, y)
         fenetre.ctx.closePath()
 
-        # if self.couleur_temp == (0,0,0):
-        #     print(self.x,self.y)
-        # if self.x == 0 and self.y == 0:
-        #     print(self.couleur_temp)
-
         fenetre.ctx.fillStyle = (
             f"#{format(self.couleur_temp[0], '02X')}"
             f"{format(self.couleur_temp[1], '02X')}"
